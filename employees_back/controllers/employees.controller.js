@@ -1,82 +1,55 @@
-const employees = require('../models/employees.model')
-const response = {
-    msg: '',
-    success: false
+const Employees = require('../models/employees.model')
+const response = { msg: '', success: false }
+
+exports.find = async (req, res) => {
+    const employees = await Employees.find()
+    res.json(employees)
 }
 
-exports.create = function(req, res) {
-    let { body } = req
-    let employee = new employees({
-        name: body.name,
-        surname_P: body.surname_M,
-        surname_M: body.surname_M,
-        phone: body.phone,
-        email: body.email,
-        address: body.address
-    })
+exports.findOne = async (req, res) => {
+    const employee = await Employees.findOne({ _id: req.params.id })
+    res.json(employee)
+}
 
-    employee.save(function(err) {
-        if(err) {
-            console.error(err)
-            response.success = false
-            response.msg = 'Error al guardar el empleado'
-            res.json(response)
-            return
-        }
+exports.create = async (req, res) => {
+    const { name, surname_P,surname_M, phone, email, address } = req.body;
+    const employee = new Employees({ name, surname_P,surname_M, phone, email, address });
+    await employee.save().then(() => {
         response.success = true
         response.msg = 'El empleado se guardo correctamente'
-        res.json(response)
-    })
+        console.log(response.msg)
+    }).catch(err => {
+        response.success = false
+        response.msg = 'Error al guardar el empleado'
+        console.error(err)
+    });
+    res.json(response)
 }
 
-exports.find = function(req, res) {
-    employees.find(function(error, data) {
-        res.json(data)
-    })
-}
-
-exports.findOne = function(req, res) {
-    employees.findOne({ _id: req.params.id }, function(error, data) {
-        res.json(data)
-    })
-}
-
-exports.update = function(req, res) {
-    let { body } = req
-    let employee = {
-        name: body.name,
-        surname_P: body.surname_M,
-        surname_M: body.surname_M,
-        phone: body.phone,
-        email: body.email,
-        address: body.address
-    }
-    console.log(employee)
-    employees.findByIdAndUpdate( req.params.id, { $set: employee }, function(err) {
-        if(err) {
-            console.error(err)
-            response.success = false
-            response.msg = 'Error al modificar el empleado'
-            res.json(response)
-            return
-        }
+exports.update = async (req, res) => {
+    const { name, surname_P,surname_M, phone, email, address } = req.body;
+    const employee = { name, surname_P,surname_M, phone, email, address }
+    await Employees.findByIdAndUpdate(req.params.id, { $set: employee }).then(()=>{
         response.success = true
         response.msg = 'El empleado se modifico correctamente'
-        res.json(response)
+        console.log(response.msg)
+    }).catch(err => {
+        response.success = false
+        response.msg = 'Error al modificar el empleado'
+        console.error(err)
     })
+    res.json(response)
 }
 
-exports.remove = function(req, res) {
-    employees.findByIdAndRemove({ _id: req.params.id }, function(err) {
-        if(err) {
-            console.error(err)
-            response.success = false
-            response.msg = 'Error al eliminar el empleado'
-            res.json(response)
-            return
-        }
+exports.remove = async (req, res) => {
+    await Employees.findByIdAndRemove({ _id: req.params.id }).then(() => {
         response.success = true
         response.msg = 'El empleado se elimino correctamente'
-        res.json(response)
+        console.log(response.msg)
+    }).catch(err => {
+        response.success = false
+        response.msg = 'Error al eliminar el empleado'
+        console.error(err)
     })
+    res.json(response)
 }
