@@ -1,0 +1,15 @@
+#nabvar #navbar-sub-brand {
+    font-size: 16px;
+}
+#dropdown-header .row:nth-child(1) {
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+#dropdown-header .row:nth-child(2) {
+    margin-top: 5px;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+}
